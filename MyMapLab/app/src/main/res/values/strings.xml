@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyMapLab</string>
+    <string name="title_activity_maps">Map</string>
+</resources>

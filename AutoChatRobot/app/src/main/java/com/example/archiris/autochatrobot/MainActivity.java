@@ -42,19 +42,12 @@ public class MainActivity extends AppCompatActivity {
     private VoiceRecognizeManager recognizerManager;
     private TuringApiManager mTuringApiManager;
     private TextView mStatus;
-    /**
-     * 返回结果，开始说话
-     */
-    public final int SPEECH_START = 0;
-    /**
-     * 开始识别
-     */
-    public final int RECOGNIZE_RESULT = 1;
-    /**
-     * 开始识别
-     */
-    public final int RECOGNIZE_START = 2;
 
+    // user input his chat content
+    public final int CHAT_START = 0;
+
+    // robot reply
+    public final int CHAT_RESULT = 1;
     /**
      * 申请的turing的apikey
      **/
@@ -71,16 +64,11 @@ public class MainActivity extends AppCompatActivity {
     private Handler myHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case SPEECH_START:
-                    ttsManager.startTTS((String) msg.obj);
-                    mStatus.setText("开始讲话：" + (String) msg.obj);
+                case CHAT_RESULT:
+                    // add textview
                     break;
-                case RECOGNIZE_RESULT:
-                    mStatus.setText("识别结果：" + msg.obj);
-                    break;
-                case RECOGNIZE_START:
-                    mStatus.setText("开始识别");
-                    break;
+                case CHAT_START:
+                    mStatus.setText((String) msg.obj);
                 default:
                     break;
             }
@@ -115,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 // 获取userid成功后，才可以请求Turing服务器，需要请求必须在此回调成功，才可正确请求
                 mTuringApiManager = new TuringApiManager(MainActivity.this);
                 mTuringApiManager.setHttpListener(myHttpConnectionListener);
-                ttsManager.startTTS("你好啊");
             }
         });
     }
@@ -135,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                             .toString());
                     if (result_obj.has("text")) {
                         Log.d(TAG, result_obj.get("text").toString());
-                        myHandler.obtainMessage(SPEECH_START,
+                        myHandler.obtainMessage(CHAT_RESULT,
                                 result_obj.get("text")).sendToTarget();
                     }
                 } catch (JSONException e) {

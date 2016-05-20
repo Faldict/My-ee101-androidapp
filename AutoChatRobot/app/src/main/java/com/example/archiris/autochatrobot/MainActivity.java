@@ -1,4 +1,5 @@
 package com.example.archiris.autochatrobot;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -61,25 +63,12 @@ public class MainActivity extends AppCompatActivity {
      **/
     private final String UNIQUEID = "131313131";
 
-    private Handler myHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case CHAT_RESULT:
-                    // add textview
-                    break;
-                case CHAT_START:
-                    mStatus.setText((String) msg.obj);
-                default:
-                    break;
-            }
-        }
-    };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TextView textView = new TextView(this);
 
         mStatus = (TextView) findViewById(R.id.tvstatus);
 
@@ -105,6 +94,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void add_msg(String msg) {
+
+    }
+
+    public void add_reply(String msg) {
+
+    }
+
+    public void sendMessage(View view) {
+        EditText editText = (EditText) findViewById(R.id.send_msg);
+        String msg=editText.toString();
+        add_msg(msg);
+        mTuringApiManager.requestTuringAPI(msg);
+    }
+
     HttpConnectionListener myHttpConnectionListener = new HttpConnectionListener() {
         @Override
         public void onError(ErrorMessage errorMessage) {
@@ -120,8 +124,7 @@ public class MainActivity extends AppCompatActivity {
                             .toString());
                     if (result_obj.has("text")) {
                         Log.d(TAG, result_obj.get("text").toString());
-                        myHandler.obtainMessage(CHAT_RESULT,
-                                result_obj.get("text")).sendToTarget();
+                        add_reply(result_obj.get("text").toString());
                     }
                 } catch (JSONException e) {
                     Log.d(TAG, "JSONException:" + e.getMessage());

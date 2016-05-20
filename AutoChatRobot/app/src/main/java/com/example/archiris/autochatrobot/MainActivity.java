@@ -1,17 +1,14 @@
 package com.example.archiris.autochatrobot;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 
@@ -19,31 +16,20 @@ import turing.os.http.core.ErrorMessage;
 import turing.os.http.core.HttpConnectionListener;
 import turing.os.http.core.RequestResult;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.turing.androidsdk.InitListener;
 import com.turing.androidsdk.SDKInit;
 import com.turing.androidsdk.SDKInitBuilder;
 import com.turing.androidsdk.TuringApiManager;
-import com.turing.androidsdk.asr.VoiceRecognizeManager;
-import com.turing.androidsdk.asr.VoiceRecognizeListener;
-import com.turing.androidsdk.tts.TTSListener;
-import com.turing.androidsdk.tts.TTSManager;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Handler;
-import java.util.logging.LogRecord;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = MainActivity.class.getSimpleName();
-    private TTSManager ttsManager;
-    private VoiceRecognizeManager recognizerManager;
     private TuringApiManager mTuringApiManager;
-    private TextView mStatus;
 
     // user input his chat content
     public final int CHAT_START = 0;
@@ -53,11 +39,11 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 申请的turing的apikey
      **/
-    private final String TURING_APIKEY = "d975f8141aa550cea27b7f48dd50c48d";
+    private final String TURING_APIKEY = "ee9e63c5c2f98de47f8cb54b193e2235";
     /**
      * 申请的secret
      **/
-    private final String TURING_SECRET = "4145a1cb5f92901b";
+    private final String TURING_SECRET = "c20c187e2552afa1";
     /**
      * 填写一个任意的标示，没有具体要求，，但一定要写，
      **/
@@ -68,9 +54,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView textView = new TextView(this);
-
-        mStatus = (TextView) findViewById(R.id.tvstatus);
 
         init();
     }
@@ -95,11 +78,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void add_msg(String msg) {
+        // stylesheet edit here
+        TextView textView = new TextView(this);
+        textView.setTextSize(40);
+        textView.setText(msg);
+        textView.setGravity(Gravity.RIGHT);
 
+        ScrollView scrollView = (ScrollView) findViewById(R.id.record);
+        assert scrollView != null;
+        scrollView.addView(textView);
     }
 
     public void add_reply(String msg) {
+        // stylesheet edit here
+        TextView textView = new TextView(this);
+        textView.setTextSize(40);
+        textView.setText(msg);
+        textView.setGravity(Gravity.LEFT);
 
+        ScrollView scrollView = (ScrollView) findViewById(R.id.record);
+        assert scrollView != null;
+        scrollView.addView(textView);
     }
 
     public void sendMessage(View view) {

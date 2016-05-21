@@ -1,4 +1,6 @@
 package com.example.archiris.autochatrobot;
+
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import turing.os.http.core.ErrorMessage;
 import turing.os.http.core.HttpConnectionListener;
 import turing.os.http.core.RequestResult;
 
+import com.google.android.gms.appindexing.Action;
 import com.turing.androidsdk.InitListener;
 import com.turing.androidsdk.SDKInit;
 import com.turing.androidsdk.SDKInitBuilder;
@@ -49,16 +52,16 @@ public class MainActivity extends AppCompatActivity {
      **/
     private final String UNIQUEID = "131313131";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         init();
     }
 
     private void init() {
+
+
         // turingSDK初始化
         SDKInitBuilder builder = new SDKInitBuilder(this)
                 .setSecret(TURING_SECRET).setTuringKey(TURING_APIKEY).setUniqueId(UNIQUEID);
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendMessage(View view) {
         EditText editText = (EditText) findViewById(R.id.send_msg);
-        String msg=editText.toString();
+        String msg = editText.toString();
         add_msg(msg);
         mTuringApiManager.requestTuringAPI(msg);
     }
@@ -158,11 +161,23 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.archiris.autochatrobot/http/host/path")
+        );
+
     }
 }

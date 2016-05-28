@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -65,11 +66,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            //申请WRITE_EXTERNAL_STORAGE权限
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
-        }
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -95,57 +91,85 @@ public class MainActivity extends AppCompatActivity {
                 onStop();
             }
         }
+        else if (requestCode == WRITE_EXTERNAL_STORAGE_REQUEST_CODE) {
+            if (grantResults[0]== PackageManager.PERMISSION_GRANTED) {
+                // turingSDK初始化
+                SDKInitBuilder builder = new SDKInitBuilder(this)
+                        .setSecret(TURING_SECRET).setTuringKey(TURING_APIKEY).setUniqueId(UNIQUEID);
+                SDKInit.init(builder, new InitListener() {
+                    @Override
+                    public void onFail(String error) {
+                        Log.d(TAG, error);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        // 获取userid成功后，才可以请求Turing服务器，需要请求必须在此回调成功，才可正确请求
+                        mTuringApiManager = new TuringApiManager(MainActivity.this);
+                        mTuringApiManager.setHttpListener(myHttpConnectionListener);
+                    }
+                });
+            }
+        }
     }
 
     private void init() {
+        // 申请权限
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            //申请WRITE_EXTERNAL_STORAGE权限
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+        }
+        else {
+            // turingSDK初始化
+            SDKInitBuilder builder = new SDKInitBuilder(this)
+                    .setSecret(TURING_SECRET).setTuringKey(TURING_APIKEY).setUniqueId(UNIQUEID);
+            SDKInit.init(builder, new InitListener() {
+                @Override
+                public void onFail(String error) {
+                    Log.d(TAG, error);
+                }
 
+                @Override
+                public void onComplete() {
+                    // 获取userid成功后，才可以请求Turing服务器，需要请求必须在此回调成功，才可正确请求
+                    mTuringApiManager = new TuringApiManager(MainActivity.this);
+                    mTuringApiManager.setHttpListener(myHttpConnectionListener);
+                }
+            });
+        }
 
-        // turingSDK初始化
-        SDKInitBuilder builder = new SDKInitBuilder(this)
-                .setSecret(TURING_SECRET).setTuringKey(TURING_APIKEY).setUniqueId(UNIQUEID);
-        SDKInit.init(builder, new InitListener() {
-            @Override
-            public void onFail(String error) {
-                Log.d(TAG, error);
-            }
-
-            @Override
-            public void onComplete() {
-                // 获取userid成功后，才可以请求Turing服务器，需要请求必须在此回调成功，才可正确请求
-                mTuringApiManager = new TuringApiManager(MainActivity.this);
-                mTuringApiManager.setHttpListener(myHttpConnectionListener);
-            }
-        });
     }
 
     public void add_msg(String msg) {
         // stylesheet edit here
         TextView textView = new TextView(this);
-        textView.setTextSize(40);
+        textView.setTextSize(20);
         textView.setText(msg);
         textView.setGravity(Gravity.RIGHT);
 
-        ScrollView scrollView = (ScrollView) findViewById(R.id.record);
-        assert scrollView != null;
-        scrollView.addView(textView);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.content);
+        assert layout != null;
+        layout.addView(textView);
     }
 
     public void add_reply(String msg) {
         // stylesheet edit here
         TextView textView = new TextView(this);
-        textView.setTextSize(40);
+        textView.setTextSize(20);
         textView.setText(msg);
         textView.setGravity(Gravity.LEFT);
 
-        ScrollView scrollView = (ScrollView) findViewById(R.id.record);
-        assert scrollView != null;
-        scrollView.addView(textView);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.content);
+        assert layout != null;
+        layout.addView(textView);
     }
 
     public void sendMessage(View view) {
         EditText editText = (EditText) findViewById(R.id.send_msg);
-        String msg = editText.toString();
+        String msg = editText.getText().toString();
         add_msg(msg);
+        editText.setText("");
         mTuringApiManager.requestTuringAPI(msg);
     }
 

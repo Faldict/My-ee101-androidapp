@@ -8,16 +8,23 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/record">
-        // change the stylesheet here!
-        <TextView
+        android:layout_weight="1">
+        // ScrollView can host only one direct child
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/welcome"
-            android:layout_gravity="left">
+            android:orientation="vertical"
+            android:id="@+id/content">
+            // change the stylesheet here!
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome"
+                android:layout_gravity="left">
 
-        </TextView>
+            </TextView>
+        </LinearLayout>
+
     </ScrollView>
     <LinearLayout
         android:orientation="horizontal"
